@@ -54,15 +54,65 @@ function search(){
 				
 				//Log Data
 				console.log(data); 
-			}
 			
-			$.each(data.items, function(i, item)) {
+				$.each(data.items, function(i, item) {
+					
+					//Get Output
+					var output = getOutput(item);
+					
+					//Display Results
+					$('#results').append(output);
+				});
 				
-				//Get Output
-				var output = getOutput(item);
+				var buttons = getButtons(prevPageToken, nextPageToken);
 				
-				//Display Results
-				$('#results').append(output);
+				//Display Buttons
+				$('#buttons').append(buttons);
 			}
 	);
+}
+
+//Build Output
+function getOutput(item){
+	var videoId = item.id.videoId;//video id info is in id
+	var title = item.snippet.title;//all other infos are in snippet
+	var description = item.snippet.description;
+	var thumb = item.snippet.thumbnails.high.url;//high quality thumbnail
+	var channelTitle = item.snippet.channelTitle;
+	var videoDate = item.snippet.publishedAt;
+	
+	//Build output string
+	var output = '<li>' +
+	'<div class="list-left">' +
+	'<img src="'+thumb+'">' +
+	'</div>' +
+	'<div class="list-right">'+
+	'<h3>'+title+'</h3>'+
+	'<small>By <span class="cTitle">'+channelTitle+'</span> on '+videoDate+'</small>'+
+	'<p>'+description+'</p>'+
+	'</div>'+
+	'</li>'+
+	'<div class="clearfix"></div>'+
+	'';
+	
+	return output;
+}
+
+//Build getButtons
+function getButtons(prevPageToken, nextPageToken){
+	if(!prevPageToken){
+		
+		var btnoutput = '<div class="button-container">'+
+						'<button id="next-button" class="paging-button" data-token="'+nextPageToken+'" data-query="'+q+'"'+
+						'onclick="nextPage();">Next Page</button></div>';
+	}else {
+		
+		var btnoutput = '<div class="button-container">'+
+						'<button id="prev-button" class="paging-button" data-token="'+prevPageToken+'" data-query="'+q+'"'+
+						'onclick="prevPage();">Prev Page</button>'+
+						'<button id="next-button" class="paging-button" data-token="'+nextPageToken+'" data-query="'+q+'"'+
+						'onclick="nextPage();">Next Page</button></div>';		
+	}
+	
+	return btnoutput;
 }
